@@ -1241,7 +1241,13 @@ async function main() {
   logger.debug('[server:init]', 'Initializing MCP Server...');
 
   // Start the server
-  await server.start();
+  await server.start({
+    transportType: "sse",
+    sse: {
+      endpoint: "/sse",
+      port: 8080,
+    },
+  });
   logger.info('[server:init]', `MCP Server started on port ${PORT}`);
   logger.info('[server:init]', 'Home Assistant server running on stdio');
   logger.info('[server:init]', 'SSE endpoints initialized');
