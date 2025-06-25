@@ -65,15 +65,14 @@ const tools: Tool[] = [];
 // List devices endpoint
 app.get('/list_devices', async (req, res) => {
   try {
-    // Get token from Authorization header
-    const token = req.headers.authorization?.replace('Bearer ', '');
-
-    if (!token || token !== HASS_TOKEN) {
-      return res.status(401).json({
-        success: false,
-        message: 'Unauthorized - Invalid token'
-      });
-    }
+    // Désactivation de la vérification du token
+    // const token = req.headers.authorization?.replace('Bearer ', '');
+    // if (!token || token !== HASS_TOKEN) {
+    //   return res.status(401).json({
+    //     success: false,
+    //     message: 'Unauthorized - Invalid token'
+    //   });
+    // }
 
     const tool = tools.find(t => t.name === 'list_devices');
     if (!tool) {
@@ -83,7 +82,7 @@ app.get('/list_devices', async (req, res) => {
       });
     }
 
-    const result = await tool.execute({ token });
+    const result = await tool.execute({});
     res.json(result);
   } catch (error) {
     res.status(500).json({
@@ -95,15 +94,14 @@ app.get('/list_devices', async (req, res) => {
 
 app.post('/control', async (req, res) => {
   try {
-    // Get token from Authorization header
-    const token = req.headers.authorization?.replace('Bearer ', '');
-
-    if (!token || token !== HASS_TOKEN) {
-      return res.status(401).json({
-        success: false,
-        message: 'Unauthorized - Invalid token'
-      });
-    }
+    // Désactivation de la vérification du token
+    // const token = req.headers.authorization?.replace('Bearer ', '');
+    // if (!token || token !== HASS_TOKEN) {
+    //   return res.status(401).json({
+    //     success: false,
+    //     message: 'Unauthorized - Invalid token'
+    //   });
+    // }
 
     const tool = tools.find(t => t.name === 'control');
     if (!tool) {
@@ -114,8 +112,8 @@ app.post('/control', async (req, res) => {
     }
 
     const result = await tool.execute({
-      ...req.body,
-      token
+      ...req.body
+      // token retiré
     });
     res.json(result);
   } catch (error) {
@@ -129,15 +127,14 @@ app.post('/control', async (req, res) => {
 // SSE endpoints
 app.get('/subscribe_events', (req, res) => {
   try {
-    // Get token from query parameter
-    const token = req.query.token?.toString();
-
-    if (!token || token !== HASS_TOKEN) {
-      return res.status(401).json({
-        success: false,
-        message: 'Unauthorized - Invalid token'
-      });
-    }
+    // Désactivation de la vérification du token
+    // const token = req.query.token?.toString();
+    // if (!token || token !== HASS_TOKEN) {
+    //   return res.status(401).json({
+    //     success: false,
+    //     message: 'Unauthorized - Invalid token'
+    //   });
+    // }
 
     const tool = tools.find(t => t.name === 'subscribe_events');
     if (!tool) {
@@ -148,7 +145,7 @@ app.get('/subscribe_events', (req, res) => {
     }
 
     tool.execute({
-      token,
+      // token retiré
       events: req.query.events?.toString().split(','),
       entity_id: req.query.entity_id?.toString(),
       domain: req.query.domain?.toString(),
@@ -164,15 +161,14 @@ app.get('/subscribe_events', (req, res) => {
 
 app.get('/get_sse_stats', async (req, res) => {
   try {
-    // Get token from query parameter
-    const token = req.query.token?.toString();
-
-    if (!token || token !== HASS_TOKEN) {
-      return res.status(401).json({
-        success: false,
-        message: 'Unauthorized - Invalid token'
-      });
-    }
+    // Désactivation de la vérification du token
+    // const token = req.query.token?.toString();
+    // if (!token || token !== HASS_TOKEN) {
+    //   return res.status(401).json({
+    //     success: false,
+    //     message: 'Unauthorized - Invalid token'
+    //   });
+    // }
 
     const tool = tools.find(t => t.name === 'get_sse_stats');
     if (!tool) {
@@ -182,7 +178,7 @@ app.get('/get_sse_stats', async (req, res) => {
       });
     }
 
-    const result = await tool.execute({ token });
+    const result = await tool.execute({});
     res.json(result);
   } catch (error) {
     res.status(500).json({
@@ -1241,13 +1237,7 @@ async function main() {
   logger.debug('[server:init]', 'Initializing MCP Server...');
 
   // Start the server
-  await server.start({
-    transportType: "sse",
-    sse: {
-      endpoint: "/sse",
-      port: 8096,
-    },
-  });
+  await server.start("stdio");
   logger.info('[server:init]', `MCP Server started on port ${PORT}`);
   logger.info('[server:init]', 'Home Assistant server running on stdio');
   logger.info('[server:init]', 'SSE endpoints initialized');
