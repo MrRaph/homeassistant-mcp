@@ -1245,7 +1245,7 @@ async function main() {
     transportType: "sse",
     sse: {
       endpoint: "/sse",
-      port: 8080,
+      port: 8096,
     },
   });
   logger.info('[server:init]', `MCP Server started on port ${PORT}`);
